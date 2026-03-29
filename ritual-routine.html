@@ -724,9 +724,7 @@ async function syncFromGitHub() {
   if (!configOk()) { setSyncStatus('disconnected', 'Not connected'); return; }
   setSyncStatus('saving', 'Loading from GitHub…');
   try {
-    const res = await fetch(GH_RAW_URL + '?t=' + Date.now(), {
-      headers: { 'Authorization': 'Bearer ' + getPAT() }
-    });
+    const res = await fetch(GH_RAW_URL + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
     if (text && text.trim().startsWith('{')) {
