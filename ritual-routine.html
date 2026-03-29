@@ -10,20 +10,20 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --brown:       #2C2418;
-  --brown-mid:   #3D2E1A;
-  --brown-deep:  #3D2E1A;
-  --cream:       #E8D9C0;
-  --cream-light: #F5EFE4;
-  --cream-pale:  #FAF7F2;
-  --gold:        #B8965A;
-  --gold-light:  #D4AE78;
-  --gold-pale:   #F2EAD8;
-  --body:        #2C2312;
-  --note:        #8B6F47;
-  --mist:        #B8A898;
-  --rule:        rgba(184,150,90,.2);
-  --shadow:      rgba(44,35,18,.12);
+  --brown:       #2D1810;
+  --brown-mid:   #7A3520;
+  --brown-deep:  #3D1A0A;
+  --cream:       #F5DCC8;
+  --cream-light: #F5EFE8;
+  --cream-pale:  #FAF6F2;
+  --gold:        #C4622A;
+  --gold-light:  #E8A06A;
+  --gold-pale:   #F5DCC8;
+  --body:        #2A1208;
+  --note:        #8B4A2A;
+  --mist:        #B89080;
+  --rule:        rgba(196,98,42,.18);
+  --shadow:      rgba(45,24,16,.12);
 }
 
 body {
@@ -68,7 +68,7 @@ header p {
   flex-wrap: wrap; gap: 10px;
   padding: 8px 40px;
   background: var(--brown-mid);
-  border-bottom: 1px solid rgba(184,150,90,.12);
+  border-bottom: 1px solid rgba(196,98,42,.12);
   font-size: .7rem;
 }
 .sync-status { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,.35); }
@@ -85,7 +85,7 @@ header p {
   font-family: inherit; font-size: .62rem; font-weight: 500;
   letter-spacing: .1em; text-transform: uppercase;
   padding: 4px 16px; border-radius: 999px;
-  border: 1px solid rgba(184,150,90,.35);
+  border: 1px solid rgba(196,98,42,.35);
   background: transparent; color: var(--gold-light);
   cursor: pointer; transition: all .18s;
 }
@@ -125,7 +125,7 @@ header p {
 .today-band::after {
   content: '';
   position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(184,150,90,.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(196,98,42,.35), transparent);
 }
 .today-eyebrow {
   font-size: .58rem; letter-spacing: .18em; text-transform: uppercase;
@@ -189,7 +189,7 @@ header p {
 .step-row {
   display: flex; align-items: baseline; gap: 12px;
   padding: 9px 26px;
-  border-bottom: 1px solid rgba(242,234,216,.6);
+  border-bottom: 1px solid rgba(245,220,200,.6);
   transition: background .12s;
 }
 .step-row:last-child { border-bottom: none; }
@@ -374,7 +374,7 @@ tr:last-child td { border-bottom: none; }
 /* ── Modal ── */
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(44,35,18,.55);
+  background: rgba(45,24,16,.55);
   display: flex; align-items: center; justify-content: center;
   z-index: 100; padding: 1rem;
 }
@@ -382,7 +382,7 @@ tr:last-child td { border-bottom: none; }
   background: var(--cream-pale); border-top: 3px solid var(--gold);
   border-radius: 16px; padding: 26px;
   width: min(520px, 90vw); max-height: 88vh; overflow-y: auto;
-  box-shadow: 0 24px 64px rgba(44,35,18,.35);
+  box-shadow: 0 24px 64px rgba(45,24,16,.35);
   animation: slideUp .2s ease;
 }
 @keyframes slideUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
@@ -467,7 +467,7 @@ tr:last-child td { border-bottom: none; }
     const ctx = c.getContext('2d');
     const r = size * 0.22; // corner radius
 
-    // Background — dark brown rounded square
+    // Background — terracotta dark
     ctx.beginPath();
     ctx.moveTo(r, 0); ctx.lineTo(size - r, 0);
     ctx.quadraticCurveTo(size, 0, size, r);
@@ -476,96 +476,72 @@ tr:last-child td { border-bottom: none; }
     ctx.lineTo(r, size); ctx.quadraticCurveTo(0, size, 0, size - r);
     ctx.lineTo(0, r); ctx.quadraticCurveTo(0, 0, r, 0);
     ctx.closePath();
-    ctx.fillStyle = '#2C2418';
+    ctx.fillStyle = '#2D1810';
     ctx.fill();
 
-    // Sweeping background curves
+    // Sweeping background curves — terracotta tint
     ctx.save();
     ctx.beginPath(); ctx.moveTo(-size*.1, size*.7); ctx.bezierCurveTo(size*.3,size*.3,size*.8,size*.55,size*1.1,size*.2);
-    ctx.strokeStyle = 'rgba(184,150,90,.12)'; ctx.lineWidth = size*.012; ctx.stroke();
+    ctx.strokeStyle = 'rgba(196,98,42,.13)'; ctx.lineWidth = size*.012; ctx.stroke();
     ctx.beginPath(); ctx.moveTo(-size*.1, size*.45); ctx.bezierCurveTo(size*.4,size*.1,size*.9,size*.4,size*1.1,size*.15);
-    ctx.strokeStyle = 'rgba(184,150,90,.07)'; ctx.lineWidth = size*.009; ctx.stroke();
+    ctx.strokeStyle = 'rgba(196,98,42,.07)'; ctx.lineWidth = size*.009; ctx.stroke();
     ctx.restore();
 
-    // Draw eyedropper — upright, centered
-    // viewBox 0 0 28 82, rendered at ~40% of canvas height, centered
-    const sc = size / 180;  // scale factor relative to 180px design
-    const ox = size * 0.5;  // center x
-    const oy = size * 0.12; // top offset
+    // ── Apothecary jar — 3 layered fills ──
+    const cx = size * 0.5;
+    const cy = size * 0.56;
+    const rx = size * 0.30;
+    const ry = size * 0.22;
 
-    function px(x) { return ox + (x - 14) * sc * 4.5; }
-    function py(y) { return oy + y * sc * 4.5; }
+    const dark   = '#7A3520';
+    const mid    = '#C4622A';
+    const light  = '#E8A06A';
+    const hilit  = '#FAE8D8';
 
-    const brass   = '#B8965A';
-    const brassL  = '#D4AE78';
-    const hilight = '#F5F0E8';
+    // Jar body ellipse
+    ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2);
+    ctx.fillStyle = '#3A1F12'; ctx.globalAlpha = 0.9; ctx.fill();
 
-    // Capsule bulb
+    // Layer 3 — bottom (darkest)
     ctx.beginPath();
-    const bx = px(8), bw = 12*sc*4.5, bh = 20*sc*4.5, brad = 6*sc*4.5;
-    ctx.roundRect(bx, py(2), bw, bh, brad);
-    ctx.fillStyle = brass; ctx.globalAlpha = 0.92; ctx.fill();
-    // Bulb highlight
-    ctx.beginPath(); ctx.roundRect(px(9.5), py(3.5), 4*sc*4.5, 14*sc*4.5, 2*sc*4.5);
-    ctx.fillStyle = brassL; ctx.globalAlpha = 0.28; ctx.fill();
+    ctx.ellipse(cx, cy + ry*0.38, rx*0.98, ry*0.62, 0, 0, Math.PI);
+    ctx.fillStyle = dark; ctx.globalAlpha = 0.75; ctx.fill();
 
-    // Collar flange
-    ctx.beginPath(); ctx.roundRect(px(5), py(21), 18*sc*4.5, 4*sc*4.5, 2*sc*4.5);
-    ctx.fillStyle = brass; ctx.globalAlpha = 0.88; ctx.fill();
-
-    // Barrel fill
-    ctx.beginPath(); ctx.roundRect(px(10.5), py(25), 7*sc*4.5, 25*sc*4.5, 1*sc*4.5);
-    ctx.fillStyle = brassL; ctx.globalAlpha = 0.16; ctx.fill();
-    // Barrel stroke
-    ctx.beginPath(); ctx.roundRect(px(10.5), py(25), 7*sc*4.5, 25*sc*4.5, 1*sc*4.5);
-    ctx.strokeStyle = brass; ctx.lineWidth = 1.2*sc*4.5; ctx.globalAlpha = 0.8; ctx.stroke();
-
-    // Liquid level
-    ctx.beginPath(); ctx.roundRect(px(11.5), py(32), 5*sc*4.5, 17*sc*4.5, 0.5*sc*4.5);
-    ctx.fillStyle = brass; ctx.globalAlpha = 0.42; ctx.fill();
-
-    // Glass highlight line
-    ctx.beginPath(); ctx.moveTo(px(12.2), py(27)); ctx.lineTo(px(12.2), py(48));
-    ctx.strokeStyle = hilight; ctx.lineWidth = 0.8*sc*4.5; ctx.globalAlpha = 0.28; ctx.stroke();
-
-    // Tip knob fill
-    ctx.beginPath(); ctx.roundRect(px(9.5), py(50), 9*sc*4.5, 5*sc*4.5, 1.5*sc*4.5);
-    ctx.fillStyle = brassL; ctx.globalAlpha = 0.5; ctx.fill();
-    // Tip knob stroke
-    ctx.beginPath(); ctx.roundRect(px(9.5), py(50), 9*sc*4.5, 5*sc*4.5, 1.5*sc*4.5);
-    ctx.strokeStyle = brass; ctx.lineWidth = 0.9*sc*4.5; ctx.globalAlpha = 0.65; ctx.stroke();
-
-    // Taper
+    // Layer 2 — middle
     ctx.beginPath();
-    ctx.moveTo(px(11), py(55)); ctx.lineTo(px(17), py(55));
-    ctx.lineTo(px(15.2), py(62)); ctx.lineTo(px(12.8), py(62)); ctx.closePath();
-    ctx.fillStyle = brassL; ctx.globalAlpha = 0.6; ctx.fill();
+    ctx.ellipse(cx, cy + ry*0.05, rx*0.96, ry*0.55, 0, Math.PI, Math.PI*2);
+    ctx.ellipse(cx, cy + ry*0.38, rx*0.98, ry*0.62, 0, 0, Math.PI);
+    ctx.fillStyle = mid; ctx.globalAlpha = 0.82; ctx.fill();
+
+    // Layer 1 — top (lightest/brightest)
     ctx.beginPath();
-    ctx.moveTo(px(11), py(55)); ctx.lineTo(px(17), py(55));
-    ctx.lineTo(px(15.2), py(62)); ctx.lineTo(px(12.8), py(62)); ctx.closePath();
-    ctx.strokeStyle = brass; ctx.lineWidth = 0.8*sc*4.5; ctx.globalAlpha = 0.5; ctx.stroke();
+    ctx.ellipse(cx, cy - ry*0.28, rx*0.92, ry*0.48, 0, Math.PI, Math.PI*2);
+    ctx.ellipse(cx, cy + ry*0.05, rx*0.96, ry*0.55, 0, 0, Math.PI);
+    ctx.fillStyle = light; ctx.globalAlpha = 0.9; ctx.fill();
 
-    // Nozzle ring
-    ctx.beginPath(); ctx.ellipse(px(14), py(62.5), 2.2*sc*4.5, 1.4*sc*4.5, 0, 0, Math.PI*2);
-    ctx.fillStyle = brass; ctx.globalAlpha = 0.88; ctx.fill();
+    // Jar outline
+    ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2);
+    ctx.strokeStyle = mid; ctx.lineWidth = size*0.008; ctx.globalAlpha = 0.5; ctx.stroke();
 
-    // Teardrop
+    // Layer dividers
+    ctx.beginPath(); ctx.ellipse(cx, cy + ry*0.05, rx*0.96, ry*0.18, 0, 0, Math.PI*2);
+    ctx.strokeStyle = '#2D1810'; ctx.lineWidth = size*0.006; ctx.globalAlpha = 0.45; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(cx, cy + ry*0.38, rx*0.94, ry*0.16, 0, 0, Math.PI*2);
+    ctx.strokeStyle = '#2D1810'; ctx.lineWidth = size*0.006; ctx.globalAlpha = 0.38; ctx.stroke();
+
+    // Lid
+    const lidY = cy - ry - size*0.01;
+    ctx.beginPath(); ctx.ellipse(cx, lidY, rx*0.66, size*0.055, 0, 0, Math.PI*2);
+    ctx.fillStyle = mid; ctx.globalAlpha = 0.88; ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx, lidY - size*0.018, rx*0.66, size*0.055, 0, 0, Math.PI*2);
+    ctx.fillStyle = mid; ctx.globalAlpha = 0.92; ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx, lidY - size*0.03, rx*0.38, size*0.034, 0, 0, Math.PI*2);
+    ctx.fillStyle = light; ctx.globalAlpha = 0.55; ctx.fill();
+
+    // Glass highlight arc
     ctx.beginPath();
-    ctx.moveTo(px(14), py(65));
-    ctx.bezierCurveTo(px(14), py(65), px(9.8), py(72), px(9.8), py(75.5));
-    ctx.bezierCurveTo(px(9.8), py(78.5), px(11.7), py(80.5), px(14), py(80.5));
-    ctx.bezierCurveTo(px(16.3), py(80.5), px(18.2), py(78.5), px(18.2), py(75.5));
-    ctx.bezierCurveTo(px(18.2), py(72), px(14), py(65), px(14), py(65));
-    ctx.closePath();
-    ctx.fillStyle = brass; ctx.globalAlpha = 0.82; ctx.fill();
-
-    // Drop highlight
-    ctx.save();
-    ctx.translate(px(12.2), py(74));
-    ctx.rotate(-15 * Math.PI / 180);
-    ctx.beginPath(); ctx.ellipse(0, 0, 1*sc*4.5, 1.9*sc*4.5, 0, 0, Math.PI*2);
-    ctx.fillStyle = hilight; ctx.globalAlpha = 0.28; ctx.fill();
-    ctx.restore();
+    ctx.arc(cx - rx*0.6, cy, rx*0.75, -Math.PI*0.65, -Math.PI*0.15);
+    ctx.strokeStyle = hilit; ctx.lineWidth = size*0.006; ctx.globalAlpha = 0.18; ctx.stroke();
 
     ctx.globalAlpha = 1;
     return c.toDataURL('image/png');
@@ -589,7 +565,7 @@ tr:last-child td { border-bottom: none; }
     addMeta('apple-mobile-web-app-capable', 'yes');
     addMeta('apple-mobile-web-app-status-bar-style', 'black-translucent');
     addMeta('apple-mobile-web-app-title', 'Ritual');
-    addMeta('theme-color', '#2C2418');
+    addMeta('theme-color', '#2D1810');
   });
 })();
 </script>
@@ -597,31 +573,32 @@ tr:last-child td { border-bottom: none; }
 <body>
 
 <header>
+  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none" preserveAspectRatio="none" viewBox="0 0 900 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M-10 110 C80 60 200 95 350 45 C460 10 550 60 620 50 C700 38 780 70 920 30" stroke="rgba(196,98,42,.13)" stroke-width="2" fill="none"/>
+    <path d="M-10 70 C100 30 240 65 400 25 C510 -5 620 40 760 20 C840 8 890 35 930 18" stroke="rgba(196,98,42,.08)" stroke-width="1.5" fill="none"/>
+    <path d="M-10 130 C70 95 180 115 320 80 C430 52 540 85 700 65 C800 52 870 78 930 58" stroke="rgba(196,98,42,.05)" stroke-width="1.8" fill="none"/>
+  </svg>
   <div class="header-inner">
-    <svg width="46" height="108" viewBox="0 0 28 82" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Capsule bulb -->
-      <rect x="8" y="2" width="12" height="20" rx="6" fill="#B8965A" opacity=".92"/>
-      <rect x="9.5" y="3.5" width="4" height="14" rx="2" fill="#D4AE78" opacity=".28"/>
-      <!-- Collar flange -->
-      <rect x="5" y="21" width="18" height="4" rx="2" fill="#B8965A" opacity=".88"/>
-      <!-- Barrel -->
-      <rect x="10.5" y="25" width="7" height="25" rx="1" fill="#D4AE78" opacity=".16"/>
-      <rect x="10.5" y="25" width="7" height="25" rx="1" stroke="#B8965A" stroke-width="1.2" fill="none" opacity=".8"/>
-      <!-- Liquid level -->
-      <rect x="11.5" y="32" width="5" height="17" rx=".5" fill="#B8965A" opacity=".42"/>
+    <svg width="72" height="72" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Jar body -->
+      <ellipse cx="27" cy="33" rx="16" ry="11.5" fill="#3A1F12" opacity=".9"/>
+      <!-- Layer 3 — bottom -->
+      <path d="M11.2 37.5 C11.8 42 18.5 46 27 46 C35.5 46 42.2 42 42.8 37.5 C42 34.5 35.5 32.5 27 32.5 C18.5 32.5 12 34.5 11.2 37.5 Z" fill="#7A3520" opacity=".75"/>
+      <!-- Layer 2 — mid -->
+      <path d="M11.3 33 C11.8 28.5 18.5 25 27 25 C35.5 25 42.2 28.5 42.7 33 C42 36 35.5 37.8 27 37.8 C18.5 37.8 12 36 11.3 33 Z" fill="#C4622A" opacity=".82"/>
+      <!-- Layer 1 — top -->
+      <path d="M12.5 27 C14 22.5 19.5 20 27 20 C34.5 20 40 22.5 41.5 27 C40.5 30.5 34.5 32 27 32 C19.5 32 13.5 30.5 12.5 27 Z" fill="#E8A06A" opacity=".9"/>
+      <!-- Jar outline -->
+      <ellipse cx="27" cy="33" rx="16" ry="11.5" fill="none" stroke="#C4622A" stroke-width="1" opacity=".4"/>
+      <!-- Layer dividers -->
+      <path d="M11.5 33 C18 31 36 31 42.5 33" stroke="#2D1810" stroke-width="1" fill="none" opacity=".4"/>
+      <path d="M11.3 37.5 C18 35.8 36 35.8 42.7 37.5" stroke="#2D1810" stroke-width="1" fill="none" opacity=".35"/>
+      <!-- Lid -->
+      <ellipse cx="27" cy="20.5" rx="10.5" ry="2.8" fill="#C4622A" opacity=".88"/>
+      <ellipse cx="27" cy="18.5" rx="10.5" ry="2.8" fill="#C4622A" opacity=".92"/>
+      <ellipse cx="27" cy="16.8" rx="6" ry="1.8" fill="#E8A06A" opacity=".55"/>
       <!-- Glass highlight -->
-      <line x1="12.2" y1="27" x2="12.2" y2="48" stroke="#F5F0E8" stroke-width=".8" stroke-linecap="round" opacity=".28"/>
-      <!-- Glass tip knob -->
-      <rect x="9.5" y="50" width="9" height="5" rx="1.5" fill="#D4AE78" opacity=".5"/>
-      <rect x="9.5" y="50" width="9" height="5" rx="1.5" stroke="#B8965A" stroke-width=".9" fill="none" opacity=".65"/>
-      <!-- Taper -->
-      <path d="M11 55 L17 55 L15.2 62 L12.8 62 Z" fill="#D4AE78" opacity=".6"/>
-      <path d="M11 55 L17 55 L15.2 62 L12.8 62 Z" stroke="#B8965A" stroke-width=".8" fill="none" opacity=".5"/>
-      <!-- Nozzle ring -->
-      <ellipse cx="14" cy="62.5" rx="2.2" ry="1.4" fill="#B8965A" opacity=".88"/>
-      <!-- Large teardrop -->
-      <path d="M14 65 C14 65 9.8 72 9.8 75.5 C9.8 78.5 11.7 80.5 14 80.5 C16.3 80.5 18.2 78.5 18.2 75.5 C18.2 72 14 65 14 65Z" fill="#B8965A" opacity=".82"/>
-      <ellipse cx="12.2" cy="74" rx="1" ry="1.9" fill="#F5F0E8" opacity=".28" transform="rotate(-15 12.2 74)"/>
+      <path d="M14 27 C13.5 31 14 37 15.5 42" stroke="#FAE8D8" stroke-width=".8" stroke-linecap="round" fill="none" opacity=".18"/>
     </svg>
     <div>
       <div class="header-eyebrow">CHAPTER 1 · SKINCARE</div>
@@ -642,8 +619,8 @@ tr:last-child td { border-bottom: none; }
 </div>
 
 <!-- PAT modal -->
-<div id="pat-modal" style="display:none;position:fixed;inset:0;background:rgba(44,35,18,.6);z-index:200;align-items:center;justify-content:center;padding:1rem" onclick="patBackdropClose(event)">
-  <div style="background:var(--cream-pale);border-radius:16px;padding:28px;width:min(480px,90vw);border-top:3px solid var(--gold);box-shadow:0 24px 64px rgba(44,35,18,.4)">
+<div id="pat-modal" style="display:none;position:fixed;inset:0;background:rgba(45,24,16,.6);z-index:200;align-items:center;justify-content:center;padding:1rem" onclick="patBackdropClose(event)">
+  <div style="background:var(--cream-pale);border-radius:16px;padding:28px;width:min(480px,90vw);border-top:3px solid var(--gold);box-shadow:0 24px 64px rgba(45,24,16,.4)">
     <div style="font-size:1.1rem;font-weight:500;color:var(--brown);margin-bottom:8px">Connect GitHub Sync</div>
     <p style="font-size:.82rem;color:var(--note);line-height:1.7;margin-bottom:16px">Enter a GitHub Personal Access Token with <strong>Contents: Read &amp; write</strong> permission scoped to the <code>rtpalme-C2/life-stuff-data</code> repository. Stored only in this browser.</p>
     <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:16px">
