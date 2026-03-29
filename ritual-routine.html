@@ -637,9 +637,7 @@ tr:last-child td { border-bottom: none; }
     <span id="sync-label">Not connected</span>
   </div>
   <div class="sync-actions">
-    <button class="btn-sync" onclick="resetLocalData()">Reset local data</button>
     <button class="btn-sync" onclick="showPATModal()">GitHub Sync</button>
-    <button class="btn-sync primary" id="btn-sync-now" style="display:none" onclick="syncNow()">Sync now</button>
   </div>
 </div>
 
@@ -656,6 +654,13 @@ tr:last-child td { border-bottom: none; }
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button onclick="closePATModal()" style="font-family:inherit;font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:8px 20px;border-radius:999px;border:1px solid var(--rule);background:white;color:var(--mist);cursor:pointer">Cancel</button>
       <button onclick="savePAT()" style="font-family:inherit;font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:8px 20px;border-radius:999px;border:none;background:var(--brown);color:var(--gold-light);cursor:pointer">Save &amp; Sync</button>
+    </div>
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:.6rem;color:var(--mist);letter-spacing:.06em;text-transform:uppercase">Advanced</span>
+      <div style="display:flex;gap:8px">
+        <button onclick="syncNow();closePATModal()" style="font-family:inherit;font-size:.6rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:999px;border:1px solid var(--rule);background:white;color:var(--mist);cursor:pointer">Sync Now</button>
+        <button onclick="closePATModal();resetLocalData()" style="font-family:inherit;font-size:.6rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:999px;border:1px solid #e0c0c0;background:white;color:#a03030;cursor:pointer">Reset Local Data</button>
+      </div>
     </div>
   </div>
 </div>
@@ -747,7 +752,6 @@ async function syncFromGitHub() {
     // Fetch SHA after successful load
     await fetchSHA();
     setSyncStatus('connected', 'Synced · ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}));
-    document.getElementById('btn-sync-now').style.display = '';
   } catch(e) {
     setSyncStatus('error', 'Sync failed — ' + e.message);
   }
