@@ -1345,9 +1345,11 @@ function renderProductRow(p) {
         </button>
       </td>
       <td>
-        ${p.status !== 'depleted'
-          ? `<button class="toggle-btn" onclick="cycleProductStatus('${p.id}')">${p.status === 'active' ? 'Mark depleting' : 'Mark depleted'}</button>`
-          : `<button class="toggle-btn" onclick="cycleProductStatus('${p.id}')">Restore</button>`}
+        ${p.status === 'active'
+          ? `<button class="toggle-btn" onclick="cycleProductStatus('${p.id}')">Mark depleting</button>`
+          : p.status === 'depleting'
+          ? `<span style="display:flex;gap:5px"><button class="toggle-btn" onclick="cycleProductStatus('${p.id}')">Mark depleted</button><button class="toggle-btn" onclick="restoreProductStatus('${p.id}')">Restore</button></span>`
+          : `<button class="toggle-btn" onclick="restoreProductStatus('${p.id}')">Restore</button>`}
       </td>
     </tr>
     ${p.note ? `<tr><td colspan="6" style="padding:2px 14px 8px;color:var(--mist);font-size:.72rem;font-style:italic">${esc(p.note)}</td></tr>` : ''}`;
@@ -1393,6 +1395,13 @@ function cycleProductStatus(id) {
   if (p.status === 'active') p.status = 'depleting';
   else if (p.status === 'depleting') p.status = 'depleted';
   else p.status = 'active';
+  scheduleSave(); renderProducts();
+}
+
+function restoreProductStatus(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  p.status = 'active';
   scheduleSave(); renderProducts();
 }
 
