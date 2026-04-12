@@ -1285,21 +1285,29 @@ function adjustCycleStart() {
 }
 
 // ── Tab: Products ─────────────────────────────────────────────────────────────
+let prodSort = 'brand'; // 'brand' | 'name' | 'status' | 'routine'
+
 function renderProducts() {
   const el = document.getElementById('tab-content');
   const sv = (document.getElementById('prod-search') || {}).value || '';
 
-  const groups = {
-    'The Ordinary': products.filter(p => p.brand === 'The Ordinary'),
-    'EltaMD': products.filter(p => p.brand === 'EltaMD'),
-    'Colorescience': products.filter(p => p.brand === 'Colorescience'),
-    'Nécessaire': products.filter(p => p.brand === 'Nécessaire'),
-    'Chaddy Cosmetics': products.filter(p => p.brand === 'Chaddy Cosmetics'),
-  };
-
   const depleting = products.filter(p => p.status === 'depleting').length;
   const depleted  = products.filter(p => p.status === 'depleted').length;
   const active    = products.filter(p => p.status === 'active').length;
+
+  // Sort
+  const statusOrder = { active: 0, depleting: 1, depleted: 2 };
+  let sorted = products.filter(p => !sv || p.name.toLowerCase().includes(sv.toLowerCase()) || p.use.toLowerCase().includes(sv.toLowerCase()));
+  if (prodSort === 'brand')    sorted.sort((a,b) => a.brand.localeCompare(b.brand) || a.name.localeCompare(b.name));
+  if (prodSort === 'name')     sorted.sort((a,b) => a.name.localeCompare(b.name));
+  if (prodSort === 'status')   sorted.sort((a,b) => statusOrder[a.status] - statusOrder[b.status] || a.name.localeCompare(b.name));
+  if (prodSort === 'routine')  sorted.sort((a,b) => a.use.localeCompare(b.use));
+
+  // Group by brand for brand sort, flat list for others
+  const useBrandGroups = prodSort === 'brand';
+
+  const sortBtn = (key, label) =>
+    `<button class="toggle-btn${prodSort === key ? ' is-on' : ''}" style="font-size:.58rem" onclick="setProdSort('${key}')">${label}</button>`;
 
   el.innerHTML = `
     <div class="metrics">
@@ -1307,42 +1315,76 @@ function renderProducts() {
       <div class="metric"><div class="metric-label">Depleting</div><div class="metric-value">${depleting}</div><div class="metric-sub">in use until gone</div></div>
       <div class="metric"><div class="metric-label">Depleted</div><div class="metric-value">${depleted}</div><div class="metric-sub">discontinued</div></div>
     </div>
-    <div class="controls">
+    <div class="controls" style="justify-content:space-between">
       <div class="search-wrap">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         <input id="prod-search" placeholder="Search products…" value="${esc(sv)}" oninput="renderProducts()">
       </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+        <span style="font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mist)">Sort</span>
+        ${sortBtn('brand','Brand')}
+        ${sortBtn('name','Name')}
+        ${sortBtn('status','Status')}
+        ${sortBtn('routine','Routine')}
+      </div>
     </div>
-    ${Object.entries(groups).map(([brand, items]) => {
-      const filtered = items.filter(p => !sv || p.name.toLowerCase().includes(sv.toLowerCase()) || p.use.toLowerCase().includes(sv.toLowerCase()));
-      if (!filtered.length) return '';
-      return `<div class="product-section">
-        <div class="product-section-title">${esc(brand)}</div>
-        <div class="product-table-wrap">
-          <table>
-            <thead><tr><th>Product</th><th>Routine Use</th><th>Size</th><th>Status</th><th>In Routine</th><th></th></tr></thead>
-            <tbody>${filtered.map(p => `
-              <tr>
-                <td style="font-weight:500">${esc(p.name)}</td>
-                <td style="color:var(--note);font-style:italic;font-size:.76rem">${esc(p.use)}</td>
-                <td style="color:var(--mist)">${esc(p.size)}</td>
-                <td><span class="badge b-${p.status}">${p.status === 'depleting' ? 'Depleting' : p.status === 'depleted' ? 'Depleted' : 'Active'}</span></td>
-                <td>
-                  <button class="toggle-btn toggle-active-btn${p.active !== false ? ' is-on' : ' is-off'}"
-                    onclick="toggleProductActive('${p.id}')">
-                    ${p.active !== false ? 'On' : 'Off'}
-                  </button>
-                </td>
-                <td>
-                  ${p.status !== 'depleted' ? `<button class="toggle-btn" onclick="cycleProductStatus('${p.id}')">${p.status === 'active' ? 'Mark depleting' : p.status === 'depleting' ? 'Mark depleted' : ''}</button>` : `<button class="toggle-btn" onclick="cycleProductStatus('${p.id}')">Restore</button>`}
-                </td>
-              </tr>
-              ${p.note ? `<tr><td colspan="5" style="padding:2px 14px 8px;color:var(--mist);font-size:.72rem;font-style:italic">${esc(p.note)}</td></tr>` : ''}
-            `).join('')}</tbody>
-          </table>
-        </div>
-      </div>`;
-    }).join('')}`;
+    ${useBrandGroups ? renderProductsByBrand(sorted, sv) : renderProductsFlat(sorted)}`;
+}
+
+function renderProductRow(p) {
+  return `
+    <tr>
+      <td style="font-weight:500">${esc(p.name)}</td>
+      <td style="color:var(--note);font-style:italic;font-size:.76rem">${esc(p.use)}</td>
+      <td style="color:var(--mist)">${esc(p.size)}</td>
+      <td><span class="badge b-${p.status}">${p.status === 'depleting' ? 'Depleting' : p.status === 'depleted' ? 'Depleted' : 'Active'}</span></td>
+      <td>
+        <button class="toggle-btn toggle-active-btn${p.active !== false ? ' is-on' : ' is-off'}"
+          onclick="toggleProductActive('${p.id}')">
+          ${p.active !== false ? 'On' : 'Off'}
+        </button>
+      </td>
+      <td>
+        ${p.status !== 'depleted'
+          ? `<button class="toggle-btn" onclick="cycleProductStatus('${p.id}')">${p.status === 'active' ? 'Mark depleting' : 'Mark depleted'}</button>`
+          : `<button class="toggle-btn" onclick="cycleProductStatus('${p.id}')">Restore</button>`}
+      </td>
+    </tr>
+    ${p.note ? `<tr><td colspan="6" style="padding:2px 14px 8px;color:var(--mist);font-size:.72rem;font-style:italic">${esc(p.note)}</td></tr>` : ''}`;
+}
+
+function renderProductsFlat(items) {
+  if (!items.length) return '<div class="empty-state">No products found.</div>';
+  return `<div class="product-table-wrap">
+    <table>
+      <thead><tr><th>Product</th><th>Routine Use</th><th>Size</th><th>Status</th><th>In Routine</th><th></th></tr></thead>
+      <tbody>${items.map(renderProductRow).join('')}</tbody>
+    </table>
+  </div>`;
+}
+
+function renderProductsByBrand(items, sv) {
+  const brandOrder = ['The Ordinary','EltaMD','Colorescience','Nécessaire','Chaddy Cosmetics'];
+  const groups = {};
+  brandOrder.forEach(b => { groups[b] = []; });
+  items.forEach(p => { if (groups[p.brand]) groups[p.brand].push(p); });
+  return Object.entries(groups).map(([brand, list]) => {
+    if (!list.length) return '';
+    return `<div class="product-section">
+      <div class="product-section-title">${esc(brand)}</div>
+      <div class="product-table-wrap">
+        <table>
+          <thead><tr><th>Product</th><th>Routine Use</th><th>Size</th><th>Status</th><th>In Routine</th><th></th></tr></thead>
+          <tbody>${list.map(renderProductRow).join('')}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setProdSort(key) {
+  prodSort = key;
+  renderProducts();
 }
 
 function cycleProductStatus(id) {
