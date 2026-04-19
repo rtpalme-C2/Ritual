@@ -848,18 +848,18 @@ function resetLocalData() {
 const SEED_PRODUCTS = [
   // Morning
   { id:'p01', name:'Squalane Cleanser',                  brand:'The Ordinary', use:'AM & PM — Step 1',           status:'active',    size:'50ml',  note:'' , active: true },
-  { id:'p02', name:'Ascorbyl Glucoside Solution 12%',    brand:'The Ordinary', use:'AM — Step 2',                status:'active',    size:'30ml',  note:'Stable Vitamin C' , active: true },
-  { id:'p03', name:'Alpha Arbutin 2% + HA',             brand:'The Ordinary', use:'AM — Step 3',                status:'depleting', size:'30ml',  note:'Deplete & stop' , active: true },
-  { id:'p04', name:'Niacinamide 10% + Zinc 1%',         brand:'The Ordinary', use:'PM — Retinol & Recovery nights', status:'active', size:'30ml', note:'Conflicts with Vitamin C — evening only' , active: true },
-  { id:'p05', name:'Hyaluronic Acid 2% + B5',           brand:'The Ordinary', use:'AM — Step 5 / All PM',       status:'active',    size:'30ml',  note:'Follow with moisturizer' , active: true },
+  { id:'p02', name:'Ascorbyl Glucoside Solution 12%',    brand:'The Ordinary', use:'AM — Step 3',                status:'active',    size:'30ml',  note:'' , active: true },
+  { id:'p03', name:'Alpha Arbutin 2% + HA',             brand:'The Ordinary', use:'AM — Step 4',                status:'depleting', size:'30ml',  note:'' , active: true },
+  { id:'p04', name:'Niacinamide 10% + Zinc 1%',         brand:'The Ordinary', use:'PM — Retinol & Recovery nights', status:'active', size:'30ml', note:'' , active: true },
+  { id:'p05', name:'Hyaluronic Acid 2% + B5',           brand:'The Ordinary', use:'AM — Step 5 / All PM',       status:'active',    size:'30ml',  note:'' , active: true },
   { id:'p06', name:'Natural Moisturizing Factors + HA', brand:'The Ordinary', use:'AM — Step 6 / All PM',       status:'active',    size:'100ml', note:'' , active: true },
-  { id:'p07', name:'Caffeine Solution 5% + EGCG',       brand:'The Ordinary', use:'AM — Step 7',                status:'active',    size:'30ml',  note:'Eye area only' , active: true },
-  { id:'p08', name:'EltaMD UV Skin Recovery SPF 50',    brand:'EltaMD',       use:'AM — Step 8 (final)',        status:'active',    size:'48g',   note:'All-mineral; nickel-size; final step' , active: true },
+  { id:'p07', name:'Caffeine Solution 5% + EGCG',       brand:'The Ordinary', use:'AM — Step 7',                status:'active',    size:'30ml',  note:'' , active: true },
+  { id:'p08', name:'EltaMD UV Skin Recovery SPF 50',    brand:'EltaMD',       use:'AM — Step 8',               status:'active',    size:'48g',   note:'' , active: true },
   { id:'p09', name:'Squalane + Amino Acids Lip Balm',   brand:'The Ordinary', use:'AM & All PM — Final',        status:'active',    size:'15ml',  note:'' , active: true },
   // Evening
-  { id:'p10', name:'Saccharomyces Ferment 30% Milky Toner', brand:'The Ordinary', use:'Retinol & Recovery — Step 2', status:'active', size:'100ml', note:'' , active: true },
-  { id:'p11', name:'Retinol 0.5% in Squalane',          brand:'The Ordinary', use:'Retinol — Step 3',           status:'active',    size:'30ml',  note:'Alternate with Granactive' , active: true },
-  { id:'p12', name:'Granactive Retinoid 2% Emulsion',   brand:'The Ordinary', use:'Retinol — Step 3',           status:'depleting', size:'30ml',  note:'Alternate with Retinol 0.5%; deplete & stop' , active: true },
+  { id:'p10', name:'Saccharomyces Ferment 30% Milky Toner', brand:'The Ordinary', use:'AM — Step 2 / Retinol & Recovery — Step 2', status:'active', size:'100ml', note:'' , active: true },
+  { id:'p11', name:'Retinol 0.5% in Squalane',          brand:'The Ordinary', use:'Retinol — Step 3',           status:'active',    size:'30ml',  note:'' , active: true },
+  { id:'p12', name:'Granactive Retinoid 2% Emulsion',   brand:'The Ordinary', use:'Retinol — Step 3',           status:'depleting', size:'30ml',  note:'' , active: true },
   { id:'p13', name:'Argireline Solution 10%',           brand:'The Ordinary', use:'Retinol — Step 5',           status:'active',    size:'30ml',  note:'' , active: true },
   { id:'p14', name:'Matrixyl 10% + HA',                brand:'The Ordinary', use:'Retinol — Step 6',           status:'active',    size:'30ml',  note:'' , active: true },
   { id:'p15', name:'Multi-Peptide Eye Serum',           brand:'The Ordinary', use:'Evening — all routines',      status:'active',   size:'15ml',  note:'' , active: true },
@@ -868,7 +868,7 @@ const SEED_PRODUCTS = [
   { id:'p18', name:'Lactic Acid 10% + HA',              brand:'The Ordinary', use:'Acid Lactic — Step 3',       status:'active',    size:'30ml',  note:'' , active: true },
   { id:'p19', name:'Azelaic Acid Suspension 10%',       brand:'The Ordinary', use:'Acid — Step 4',              status:'active',    size:'30ml',  note:'' , active: true },
   { id:'p20', name:'PHA 5% Exfoliating Lip Serum',      brand:'The Ordinary', use:'Acid — Lips',                status:'active',    size:'20ml',  note:'' , active: true },
-  { id:'p21', name:'AHA 30% + BHA 2% Peeling Solution', brand:'The Ordinary', use:'Peel — Step 2',              status:'active',    size:'30ml',  note:'Max 10 min; avoid eye area' , active: true },
+  { id:'p21', name:'AHA 30% + BHA 2% Peeling Solution', brand:'The Ordinary', use:'Peel — Step 2',              status:'active',    size:'30ml',  note:'' , active: true },
   // Supplemental
   { id:'p22', name:'Brush-On Sunscreen Mineral Powder', brand:'Colorescience', use:'Supplemental — midday SPF', status:'active',   size:'6g',    note:'' , active: true },
   { id:'p23', name:'The Hand Cream',                    brand:'Nécessaire',   use:'Supplemental — nightly',    status:'active',    size:'75ml',  note:'' , active: true },
@@ -961,13 +961,14 @@ function alphaArbutinDepleted() { return productStatus('p03') === 'depleted'; }
 function getMorningSteps() {
   return [
     { num:1, product:'Squalane Cleanser' },
-    { num:2, product:'Ascorbyl Glucoside Solution 12%' },
-    { num:3, product:'Alpha Arbutin 2% + HA', inlineNote: alphaArbutinDepleted() ? null : 'until depleted', depleted: alphaArbutinDepleted() },
-    { num:4, product:'Hyaluronic Acid 2% + B5' },
-    { num:5, product:'Natural Moisturizing Factors + HA' },
-    { num:6, product:'Caffeine Solution 5% + EGCG', note:'eye area only' },
-    { num:7, product:'EltaMD UV Skin Recovery SPF 50' },
-    { num:8, product:'Squalane + Amino Acids Lip Balm' },
+    { num:2, product:'Saccharomyces Ferment 30% Milky Toner' },
+    { num:3, product:'Ascorbyl Glucoside Solution 12%' },
+    { num:4, product:'Alpha Arbutin 2% + HA', inlineNote: alphaArbutinDepleted() ? null : 'until depleted', depleted: alphaArbutinDepleted() },
+    { num:5, product:'Hyaluronic Acid 2% + B5' },
+    { num:6, product:'Natural Moisturizing Factors + HA' },
+    { num:7, product:'Caffeine Solution 5% + EGCG' },
+    { num:8, product:'EltaMD UV Skin Recovery SPF 50' },
+    { num:9, product:'Squalane + Amino Acids Lip Balm' },
   ];
 }
 
@@ -988,16 +989,16 @@ function getEveningSteps(type) {
     { num:6,  product:'Matrixyl 10% + HA' },
     { num:7,  product:'Hyaluronic Acid 2% + B5' },
     { num:8,  product:'Natural Moisturizing Factors + HA' },
-    { num:9, product:'Multi-Peptide Eye Serum', note:'eye area only' },
+    { num:9, product:'Multi-Peptide Eye Serum' },
     { num:10, product:'Squalane + Amino Acids Lip Balm' },
   ];
   if (type === 'Acid') return [
     { num:1, product:'Squalane Cleanser' },
     { num:2, product:'Salicylic Acid 2% Solution' },
-    { num:3, product:'Glycolic Acid 7% Toning Solution', note:'AHA — texture, tone, cell turnover' },
+    { num:3, product:'Glycolic Acid 7% Toning Solution' },
     { num:4, product:'Azelaic Acid Suspension 10%' },
     { num:5, product:'Hyaluronic Acid 2% + B5' },
-    { num:6, product:'Multi-Peptide Eye Serum', note:'eye area only' },
+    { num:6, product:'Multi-Peptide Eye Serum' },
     { num:7, product:'Natural Moisturizing Factors + HA' },
     { num:8, product:'PHA 5% Exfoliating Lip Serum' },
     { num:9, product:'Squalane + Amino Acids Lip Balm' },
@@ -1005,21 +1006,21 @@ function getEveningSteps(type) {
   if (type === 'Acid-Lactic') return [
     { num:1, product:'Squalane Cleanser' },
     { num:2, product:'Salicylic Acid 2% Solution' },
-    { num:3, product:'Lactic Acid 10% + HA', note:'gentler AHA — with built-in hydration' },
+    { num:3, product:'Lactic Acid 10% + HA' },
     { num:4, product:'Azelaic Acid Suspension 10%' },
     { num:5, product:'Hyaluronic Acid 2% + B5' },
-    { num:6, product:'Multi-Peptide Eye Serum', note:'eye area only' },
+    { num:6, product:'Multi-Peptide Eye Serum' },
     { num:7, product:'Natural Moisturizing Factors + HA' },
     { num:8, product:'PHA 5% Exfoliating Lip Serum' },
     { num:9, product:'Squalane + Amino Acids Lip Balm' },
   ];
   if (type === 'Peel') return [
-    { num:1, product:'Squalane Cleanser', note:'thoroughly clean, dry face' },
-    { num:2, product:'AHA 30% + BHA 2% Peeling Solution', note:'apply evenly, avoid eye area — max 10 min, then rinse' },
-    { num:3, product:'Saccharomyces Ferment 30% Milky Toner', note:'soothe & rebalance after rinsing' },
-    { num:4, product:'Hyaluronic Acid 2% + B5', note:'deep rehydration' },
-    { num:5, product:'Multi-Peptide Eye Serum', note:'eye area only' },
-    { num:6, product:'Natural Moisturizing Factors + HA', note:'restore barrier — apply generously' },
+    { num:1, product:'Squalane Cleanser' },
+    { num:2, product:'AHA 30% + BHA 2% Peeling Solution' },
+    { num:3, product:'Saccharomyces Ferment 30% Milky Toner' },
+    { num:4, product:'Hyaluronic Acid 2% + B5' },
+    { num:5, product:'Multi-Peptide Eye Serum' },
+    { num:6, product:'Natural Moisturizing Factors + HA' },
     { num:7, product:'Squalane + Amino Acids Lip Balm' },
   ];
   if (type === 'Recovery') return [
@@ -1028,7 +1029,7 @@ function getEveningSteps(type) {
     { num:3, product:'Niacinamide 10% + Zinc 1%' },
     { num:4, product:'Hyaluronic Acid 2% + B5' },
     { num:5, product:'Natural Moisturizing Factors + HA' },
-    { num:6, product:'Multi-Peptide Eye Serum', note:'eye area only' },
+    { num:6, product:'Multi-Peptide Eye Serum' },
     { num:7, product:'Squalane + Amino Acids Lip Balm' },
   ];
   return [];
