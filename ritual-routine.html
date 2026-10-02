@@ -98,16 +98,18 @@ header h1 { font-size: 2.2rem; font-weight: 300; color: var(--cream); letter-spa
 
 /* ── Nav tabs ── */
 .tab-bar {
-  display: flex; gap: 2px; padding: 0 40px;
-  background: white; border-bottom: 1px solid var(--rule);
+  display: flex; gap: 2px; padding: 0 40px 1px;
+  background: linear-gradient(var(--rule), var(--rule)) bottom / 100% 1px no-repeat white;
+  overflow-x: auto; scrollbar-width: none;
 }
+.tab-bar::-webkit-scrollbar { display: none; }
 .tab {
   font-family: inherit; font-size: .65rem; font-weight: 500;
   letter-spacing: .1em; text-transform: uppercase;
   padding: 13px 17px; cursor: pointer;
   border: none; background: none; color: #bbb;
   border-bottom: 2px solid transparent; margin-bottom: -1px;
-  transition: all .18s;
+  transition: all .18s; flex-shrink: 0; white-space: nowrap;
 }
 .tab:hover { color: var(--gold); }
 .tab.active { color: var(--brown); border-bottom-color: var(--gold); }
@@ -465,7 +467,7 @@ tr:last-child td { border-bottom: none; }
   background: var(--warn-bg); border: 1.5px solid var(--warn-border); border-radius: 4px;
   font-size: .8rem; line-height: 1.6; color: var(--warn-text);
 }
-.config-notice strong { display: block; margin-bottom: 4px; font-size: .85rem; }
+.config-notice > strong:first-child { display: block; margin-bottom: 4px; font-size: .85rem; }
 .config-notice code {
   background: #f0e8c8; padding: 1px 6px; border-radius: 4px;
   font-family: monospace; font-size: .78rem;
@@ -516,6 +518,8 @@ tr:last-child td { border-bottom: none; }
 @media (max-width: 768px) {
   header { padding: 24px 20px 20px; }
   .sync-bar, .tab-bar, .content, .config-notice { padding-left: 16px; padding-right: 16px; }
+  .tab-bar { gap: 0; }
+  .tab { padding: 13px 11px; letter-spacing: .06em; }
   .metrics { grid-template-columns: 1fr 1fr; }
   .cycle-row { grid-template-columns: repeat(4, 1fr); }
 }
