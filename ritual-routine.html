@@ -631,6 +631,10 @@ const DATA_VERSION = 2;
 
 let saveTimer   = null;
 let pendingSave = false;
+let remoteReady  = false;  // true once the remote file has been read (or confirmed missing/empty)
+let localTrusted = false;  // true when this device started with real cached data (not seed/empty)
+function pushAllowed() { return remoteReady || localTrusted; }
+function localYMD() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 
 function getPAT()  { return localStorage.getItem(LS_PAT) || ''; }
 function getSHA()  { return localStorage.getItem(LS_SHA) || ''; }
@@ -692,8 +696,10 @@ async function syncFromGitHub() {
     const res = await fetch(GH_RAW_URL + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
+    if (!text || !text.trim()) remoteReady = true;
     if (text && text.trim().startsWith('{')) {
       const data = JSON.parse(text);
+      remoteReady = true;
       const hasContent = (data.settings && data.settings.cycleStartDate !== undefined)
                       || (data.products && data.products.length > 0)
                       || (data.log && data.log.length > 0);
@@ -719,6 +725,7 @@ async function syncFromGitHub() {
 
 async function saveToGitHub() {
   if (!configOk()) return;
+  if (!pushAllowed()) { setSyncStatus('error', 'Not synced yet — changes kept locally'); return; }
   setSyncStatus('saving', 'Saving…');
   pendingSave = true;
   try {
@@ -726,7 +733,7 @@ async function saveToGitHub() {
     const payload = { _version: DATA_VERSION, settings, products, log };
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
     const body = {
-      message: 'Ritual update · ' + new Date().toISOString().slice(0,10),
+      message: 'Ritual update · ' + localYMD(),
       content,
     };
     if (getSHA()) body.sha = getSHA();
@@ -756,8 +763,9 @@ async function saveToGitHub() {
 function scheduleSave() {
   persistLocal();
   if (!configOk()) return;
+  if (!pushAllowed()) { setSyncStatus('error', 'Not synced yet — changes kept locally'); return; }
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveToGitHub, 1200);
+  saveTimer = setTimeout(() => { saveTimer = null; saveToGitHub(); }, 1200);
 }
 function persistLocal() {
   try { localStorage.setItem(LS_KEY, JSON.stringify({ _version: DATA_VERSION, settings, products, log })); } catch(e) {}
@@ -824,6 +832,7 @@ try {
   else if (raw) localStorage.removeItem(LS_KEY);
 } catch(e) {}
 
+localTrusted = !!stored;
 let settings = stored?.settings || { ...DEFAULT_SETTINGS };
 let products  = stored?.products || JSON.parse(JSON.stringify(SEED_PRODUCTS));
 let log       = stored?.log      || [];
@@ -1442,7 +1451,7 @@ function calcStreak() {
 
 function showAddLogEntry() {
   showModal('Add note', `
-    <div class="form-row"><div class="form-label">Date</div><input type="date" id="f-date" value="${new Date().toISOString().split('T')[0]}"></div>
+    <div class="form-row"><div class="form-label">Date</div><input type="date" id="f-date" value="${localYMD()}"></div>
     <div class="form-row"><div class="form-label">Session</div><select id="f-session"><option value="evening">Evening</option><option value="morning">Morning</option></select></div>
     <div class="form-row"><div class="form-label">Note</div><textarea id="f-note" placeholder="Any observations, reactions, skin notes…"></textarea></div>
   `, () => {
