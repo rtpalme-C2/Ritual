@@ -633,7 +633,10 @@ let saveTimer   = null;
 let pendingSave = false;
 let remoteReady  = false;  // true once the remote file has been read (or confirmed missing/empty)
 let localTrusted = false;  // true when this device started with real cached data (not seed/empty)
-function pushAllowed() { return remoteReady || localTrusted; }
+let dataLocked   = false;  // true when the data is from a newer app version or unrecognised: read-only, never written back
+function pushAllowed() { return !dataLocked && (remoteReady || localTrusted); }
+function isRecognised(o) { return !!o && typeof o === 'object' && !Array.isArray(o) && ('settings' in o || 'products' in o || 'log' in o); }
+function lockedNotice(msg) { dataLocked = true; setSyncStatus('error', msg); }
 function localYMD() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 
 function getPAT()  { return localStorage.getItem(LS_PAT) || ''; }
@@ -696,24 +699,45 @@ async function syncFromGitHub() {
     const res = await fetch(GH_RAW_URL + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
-    if (!text || !text.trim()) remoteReady = true;
-    if (text && text.trim().startsWith('{')) {
+    if (!text || !text.trim()) { remoteReady = true; await fetchSHA(); await saveToGitHub(); }
+    else if (text.trim().startsWith('{')) {
       const data = JSON.parse(text);
-      remoteReady = true;
       const hasContent = (data.settings && data.settings.cycleStartDate !== undefined)
                       || (data.products && data.products.length > 0)
                       || (data.log && data.log.length > 0);
+      if (!isRecognised(data) || (!hasContent && Object.keys(data).some(k => k !== '_version' && k !== 'settings' && k !== 'products' && k !== 'log'))) {
+        lockedNotice('Unrecognised data file — read-only, nothing will be overwritten');
+        await fetchSHA();
+        return;
+      }
+      if (Number(data._version) > DATA_VERSION) {
+        // Newer app version wrote this file: show it, but never write back
+        if (data.settings) settings = data.settings;
+        if (Array.isArray(data.products) && data.products.length > 0) products = data.products;
+        if (Array.isArray(data.log)) log = data.log;
+        lockedNotice('Data is from a newer app version — read-only. Please update the app.');
+        render();
+        await fetchSHA();
+        return;
+      }
+      remoteReady = true;
       if (hasContent) {
         if (data.settings) settings = data.settings;
         if (data.products && data.products.length > 0) products = data.products;
         if (data.log)      log      = data.log;
+        products.forEach(p => { if (p.active === undefined) p.active = true; });
         persistLocal();
         render();
+        // Older or unversioned file: save it back at the current version (nothing is discarded)
+        if (Number(data._version) !== DATA_VERSION) { await fetchSHA(); await saveToGitHub(); }
       } else {
+        await fetchSHA();
         await saveToGitHub();
       }
     } else {
-      await saveToGitHub();
+      lockedNotice('Unrecognised data file — read-only, nothing will be overwritten');
+      await fetchSHA();
+      return;
     }
     // Fetch SHA after successful load
     await fetchSHA();
@@ -762,12 +786,14 @@ async function saveToGitHub() {
 
 function scheduleSave() {
   persistLocal();
+  if (dataLocked) return;
   if (!configOk()) return;
   if (!pushAllowed()) { setSyncStatus('error', 'Not synced yet — changes kept locally'); return; }
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => { saveTimer = null; saveToGitHub(); }, 1200);
 }
 function persistLocal() {
+  if (dataLocked) return;
   try { localStorage.setItem(LS_KEY, JSON.stringify({ _version: DATA_VERSION, settings, products, log })); } catch(e) {}
 }
 function setSyncStatus(state, label) {
@@ -828,8 +854,10 @@ const DEFAULT_SETTINGS = {
 let stored = null;
 try {
   const raw = JSON.parse(localStorage.getItem(LS_KEY));
-  if (raw && raw._version === DATA_VERSION) stored = raw;
-  else if (raw) localStorage.removeItem(LS_KEY);
+  if (isRecognised(raw)) {
+    stored = raw;   // never discard local data on a version mismatch
+    if (Number(raw._version) > DATA_VERSION) dataLocked = true;
+  }
 } catch(e) {}
 
 localTrusted = !!stored;
@@ -1518,6 +1546,7 @@ window.addEventListener('beforeunload', e => { if (pendingSave || saveTimer) { e
 
 render();
 updateSetupBanner();
+if (dataLocked) lockedNotice('Local data is from a newer app version — read-only. Please update the app.');
 if (configOk()) syncFromGitHub();
 else setSyncStatus('disconnected', 'Not connected to GitHub');
 </script>
