@@ -622,7 +622,6 @@ tr:last-child td { border-bottom: none; }
 const GH_OWNER   = 'rtpalme-C2';
 const GH_REPO    = 'life-stuff-data';
 const GH_FILE    = 'ritual-data.json';
-const GH_RAW_URL = `https://raw.githubusercontent.com/${GH_OWNER}/${GH_REPO}/main/${GH_FILE}`;
 const GH_API_URL = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`;
 const LS_KEY     = 'ritual_local';
 const LS_PAT     = 'ritual_gh_pat';
@@ -692,11 +691,25 @@ async function fetchSHA() {
   } catch(e) {}
 }
 
+// Read through the API with the token so this works whether the data repo is public or private.
+// (A private repo answers 404 on the anonymous raw URL; that must never be mistaken for "no file".)
+function readRemote() {
+  return fetch(GH_API_URL, { cache: 'no-store', headers: { 'Authorization': 'Bearer ' + getPAT(), 'Accept': 'application/vnd.github.raw+json' } });
+}
+async function repoReachable() {
+  try {
+    const r = await fetch('https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO, { cache: 'no-store', headers: { 'Authorization': 'Bearer ' + getPAT(), 'Accept': 'application/vnd.github+json' } });
+    return r.ok;
+  } catch(e) { return false; }
+}
+
 async function syncFromGitHub() {
   if (!configOk()) { setSyncStatus('disconnected', 'Not connected'); return; }
   setSyncStatus('saving', 'Loading from GitHub…');
   try {
-    const res = await fetch(GH_RAW_URL + '?t=' + Date.now());
+    const res = await readRemote();
+    if (res.status === 404 && !(await repoReachable())) { setSyncStatus('error', 'Cannot reach the data repo — working offline'); return; }
+    if (res.status === 401 || res.status === 403) { setSyncStatus('error', 'GitHub refused the token — working offline'); return; }
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
     if (!text || !text.trim()) { remoteReady = true; await fetchSHA(); await saveToGitHub(); }
